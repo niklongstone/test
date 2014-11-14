@@ -4,7 +4,6 @@
     <meta charset="utf-8" />
     <meta name="format-detection" content="telephone=no" />
     <meta name="viewport" content="user-scalable=no, initial-scale=1, maximum-scale=1, minimum-scale=1, width=device-width, height=device-height, target-densitydpi=device-dpi" />
-    <link rel="stylesheet" type="text/css" href="css/index.css" />
     <title>Bt test mobile</title>
     <style>
         body {
@@ -17,27 +16,70 @@
 </head>
 <body>
 <script>
-    var stage = new PIXI.Stage(0xffffff);
+    <!-- bootstrap -->
+    var stage = new PIXI.Stage(0xffffff, true);
     var renderer = PIXI.autoDetectRenderer(window.innerWidth, window.innerHeight,null);
+    var gameContainer = new PIXI.DisplayObjectContainer();
     document.body.appendChild(renderer.view);
     renderer.view.style.position = "absolute";
     renderer.view.style.top = "0px";
     renderer.view.style.left = "0px";
     requestAnimFrame( animate );
 
+    <!-- canvas elements creation -->
     var texture = PIXI.Texture.fromImage("resources/bt.jpg");
     var bt = new PIXI.Sprite(texture);
-
+    bt.interactive = true;
     bt.anchor.x = 0.5;
     bt.anchor.y = 0.5;
     bt.position.x = window.innerWidth / 2;
     bt.position.y = window.innerHeight / 3;
 
-    stage.addChild(bt);
 
+    stage.addChild(bt);
+    var rotationType = 'clockwise';
+
+    bt.mousedown = function() {
+        randomVelocity();
+        changeRotation();
+    }
+
+    var rotationType = 'clockwise';
+    var velocity = 0.02;
+
+    function randomVelocity() {
+        var max = 0.1;
+        var min = 0.02;
+        velocity = Math.random() * (max - min + 1) + min;
+    }
+
+    function btRotate()
+    {
+        if (rotationType == 'clockwise') {
+            bt.rotation += velocity;
+        } else {
+            bt.rotation -= velocity;
+        }
+    }
+
+    function changeRotation() {
+        if (rotationType == 'clockwise') {
+            rotationType = 'counterclockwise';
+        } else {
+            rotationType = 'clockwise'
+        }
+    }
+
+    function randomizeRotation() {
+        var options = ['clockwise', 'counterclockwise'];
+        var index = Math.floor(Math.random() * options.length);
+        rotationType = options[index];
+    }
+
+    <!-- animation -->
     function animate() {
         requestAnimFrame( animate );
-        bt.rotation += 0.02;
+        btRotate();
         renderer.render(stage);
     }
 </script>
